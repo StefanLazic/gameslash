@@ -48,3 +48,18 @@ the player. Free them all, clear the waves, then step into the portal to move on
 - Levels 3, 7 and 9 host **Thistle Knight** mini bosses (shield charges).
 - Level 5: **Vespera, the Widow** — bullet fans, spirals, dashes, summons her brood.
 - Level 10: **Nyx, Keeper of Wings** — spirals, telegraphed slams, a sweeping beam and summons.
+
+### 5. Human-looking sister heads
+- Rewrote the head/face drawing in `js/art.js` as its own `drawHeroHead()` pass so the sisters read as
+  girls instead of coloured blobs.
+- New palettes: warm believable skin tones with a shaded side (`skin`/`skin2`), brown hair for Sofija and
+  dark plum-black for Emilija, plus eye, brow, blush and ribbon colours.
+- The face is now an oval with a neck, an ear and soft cheek/jaw shading. The hair is drawn as a full
+  silhouette *behind* the head and a swept fringe *over* the forehead, so hair and skin meet along a soft
+  diagonal instead of the old hard circle-on-circle seam.
+- Faces got expressions: white-of-eye + iris + pupil + highlight, lash lines, eyebrows, blush and a small
+  smile. Each sister blinks on her own timer (portraits stay open-eyed).
+- Hairstyles distinguish them at a glance: Sofija has a bob with a high ponytail and pink ribbon,
+  Emilija has long hair falling past her shoulders with a blue ribbon.
+- Everything is still procedural canvas drawing, so portraits (select screen + HUD) and the in-game
+  sprites all update from the same code, and the static `index.html` needs no new assets.
