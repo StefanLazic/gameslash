@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#140b26">
+<meta name="description" content="Butterfly Blades - a hack and slash adventure with Sofija and Emilija.">
+<title>Butterfly Blades</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%A6%8B%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div id="app">
+  <canvas id="bg"></canvas>
+  <canvas id="game" width="640" height="360"></canvas>
+
+  <!-- Title screen -->
+  <section id="screen-title" class="screen active">
+    <div class="panel">
+      <h1 class="title">Butterfly<span>Blades</span></h1>
+      <p class="tagline">Two sisters. Ten trials. A thousand stolen wings.</p>
+      <button class="btn big" id="btn-start">Begin the Rescue</button>
+      <button class="btn ghost" id="btn-howto">How to Play</button>
+      <p class="credit">A hack &amp; slash for Sofija &amp; Emilija</p>
+    </div>
+  </section>
+
+  <!-- How to play -->
+  <section id="screen-howto" class="screen">
+    <div class="panel">
+      <h2>How to Play</h2>
+      <ul class="howto">
+        <li><b>Move</b> — WASD / arrows, or the left thumbstick.</li>
+        <li><b>Attack</b> — J / Space, or the <span class="key">⚔</span> button. Tap fast to chain combos.</li>
+        <li><b>Special</b> — K, or the <span class="key">✦</span> button. Costs Flutter energy.</li>
+        <li><b>Dodge</b> — L / Shift, or the <span class="key">»</span> button. Brief invulnerability.</li>
+        <li><b>Rescue</b> — enemies carry caged butterflies. Free every one to open the gate.</li>
+        <li><b>Swap</b> — press Q or the sister portrait to tag in the other sister mid-fight.</li>
+      </ul>
+      <button class="btn" data-back>Back</button>
+    </div>
+  </section>
+
+  <!-- Character select -->
+  <section id="screen-select" class="screen">
+    <div class="panel wide">
+      <h2>Choose your sister</h2>
+      <div class="heroes">
+        <button class="hero" data-hero="sofija">
+          <canvas class="portrait" width="96" height="96" data-portrait="sofija"></canvas>
+          <h3>Sofija</h3>
+          <p class="style">Twin Daggers · Tempest</p>
+          <p class="desc">Fast four-hit combo, long dash, weaker hits. Special: <b>Petal Storm</b> whirl.</p>
+        </button>
+        <button class="hero" data-hero="emilija">
+          <canvas class="portrait" width="96" height="96" data-portrait="emilija"></canvas>
+          <h3>Emilija</h3>
+          <p class="style">Moon Scythe · Bulwark</p>
+          <p class="desc">Slow, wide, heavy sweeps that stagger. Special: <b>Lunar Slam</b> shockwave.</p>
+        </button>
+      </div>
+      <p class="hint">You can swap sisters any time with <b>Q</b> or the portrait button.</p>
+      <button class="btn" data-back>Back</button>
+    </div>
+  </section>
+
+  <!-- In-game HUD -->
+  <div id="hud" hidden>
+    <div class="hud-left">
+      <button id="hud-portrait" class="portrait-btn" title="Swap sister (Q)">
+        <canvas class="portrait" width="64" height="64" id="hud-face"></canvas>
+        <span class="swap">Q</span>
+      </button>
+      <div class="bars">
+        <div class="name" id="hud-name">Sofija</div>
+        <div class="bar hp"><i id="bar-hp"></i></div>
+        <div class="bar ep"><i id="bar-ep"></i></div>
+      </div>
+    </div>
+    <div class="hud-right">
+      <div id="hud-level">Level 1</div>
+      <div id="hud-butterflies">🦋 0 / 0</div>
+      <button id="btn-pause" class="icon-btn" title="Pause">❚❚</button>
+    </div>
+    <div id="boss-bar" hidden><span id="boss-name">Boss</span><div class="bar boss"><i id="bar-boss"></i></div></div>
+    <div id="toast"></div>
+  </div>
+
+  <!-- Touch controls -->
+  <div id="touch" hidden>
+    <div id="stick" class="stick"><i></i></div>
+    <div class="buttons">
+      <button class="tbtn dodge" data-btn="dodge">»</button>
+      <button class="tbtn special" data-btn="special">✦</button>
+      <button class="tbtn attack" data-btn="attack">⚔</button>
+    </div>
+  </div>
+
+  <!-- Overlays -->
+  <section id="screen-pause" class="screen dim">
+    <div class="panel">
+      <h2>Paused</h2>
+      <button class="btn" id="btn-resume">Resume</button>
+      <button class="btn ghost" id="btn-quit">Abandon run</button>
+    </div>
+  </section>
+
+  <section id="screen-over" class="screen dim">
+    <div class="panel">
+      <h2 id="over-title">The wings fade…</h2>
+      <p id="over-text"></p>
+      <button class="btn" id="btn-retry">Try again</button>
+      <button class="btn ghost" id="btn-menu">Main menu</button>
+    </div>
+  </section>
+
+  <section id="screen-win" class="screen dim">
+    <div class="panel">
+      <h2>Sky Restored!</h2>
+      <p id="win-text"></p>
+      <button class="btn" id="btn-again">Play again</button>
+    </div>
+  </section>
+
+  <div id="level-card" hidden><h2 id="card-title"></h2><p id="card-sub"></p></div>
+</div>
+
+<script src="js/util.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/art.js"></script>
+<script src="js/input.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
