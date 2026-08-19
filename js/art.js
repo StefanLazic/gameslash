@@ -6,14 +6,18 @@
   const HERO_LOOK = {
     sofija: {
       name: 'Sofija',
-      hair: '#5c2f8f', hair2: '#8a4fd0',
-      skin: '#f7cfae', dress: '#ff6ea9', dress2: '#c93b78',
+      hair: '#6b3a17', hair2: '#8d5227', hair3: '#3f2010',
+      skin: '#f6d2b3', skin2: '#e2b593', blush: '#f09a9a',
+      eye: '#4a2c17', brow: '#4a2a12', bow: '#ff8fc4',
+      dress: '#ff6ea9', dress2: '#c93b78',
       trim: '#ffd479', blade: '#8ff7e5', aura: '#ff8fc4'
     },
     emilija: {
       name: 'Emilija',
-      hair: '#e9e6ff', hair2: '#b9b3ea',
-      skin: '#f2c39b', dress: '#4a74d8', dress2: '#2b4796',
+      hair: '#2f2436', hair2: '#4b3a55', hair3: '#1c1420',
+      skin: '#f2c6a2', skin2: '#dda882', blush: '#e88f8f',
+      eye: '#2f4f6e', brow: '#3a2a34', bow: '#9fd0ff',
+      dress: '#4a74d8', dress2: '#2b4796',
       trim: '#cfe4ff', blade: '#dcefff', aura: '#7ecbff'
     }
   };
@@ -26,6 +30,137 @@
     ctx.ellipse(x, y, w, w * 0.38, 0, 0, TAU);
     ctx.fill();
     ctx.restore();
+  }
+
+  /* Head + face, drawn in "facing right" space (the caller has already flipped). */
+  function facePath(ctx) {
+    ctx.beginPath();
+    ctx.ellipse(0.2, -39.2, 4.7, 5.4, 0, 0, TAU);
+  }
+
+  function drawHeroHead(ctx, kind, L, o) {
+    const blink = o.blink ? 1 : 0;
+
+    // neck
+    ctx.fillStyle = L.skin2;
+    ctx.beginPath(); ctx.moveTo(-1.9, -33); ctx.lineTo(1.9, -33);
+    ctx.lineTo(1.6, -35.6); ctx.lineTo(-1.6, -35.6); ctx.closePath(); ctx.fill();
+
+    // hair behind the head — the silhouette that gives each sister her shape
+    ctx.fillStyle = L.hair;
+    ctx.beginPath();
+    if (kind === 'sofija') {
+      // rounded bob plus a high ponytail streaming behind her
+      ctx.ellipse(-0.2, -39.6, 6.1, 6.6, 0, 0, TAU);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(-4.4, -43.4);
+      ctx.quadraticCurveTo(-11.6, -44.6, -12.4, -38.2);
+      ctx.quadraticCurveTo(-12.9, -32.4, -8.6, -29.6);
+      ctx.quadraticCurveTo(-9.4, -35.4, -4.2, -38.4);
+      ctx.closePath();
+    } else {
+      // long straight hair falling past the shoulders
+      ctx.ellipse(-0.2, -39.8, 6.3, 6.8, 0, 0, TAU);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(-5.6, -43.2);
+      ctx.quadraticCurveTo(-8.4, -36, -7.2, -27.4);
+      ctx.lineTo(-3.6, -27.8);
+      ctx.quadraticCurveTo(-4.2, -35.6, -3.2, -41.2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(5.2, -42.6);
+      ctx.quadraticCurveTo(6.8, -35.6, 5.6, -29.6);
+      ctx.lineTo(2.8, -30.4);
+      ctx.quadraticCurveTo(3.2, -36.6, 2.6, -41);
+      ctx.closePath();
+    }
+    ctx.fill();
+
+    // face
+    ctx.fillStyle = L.skin;
+    facePath(ctx); ctx.fill();
+
+    // ear on the far side, and soft shading down the back of the cheek
+    ctx.fillStyle = L.skin2;
+    ctx.beginPath(); ctx.ellipse(-4.3, -38.6, 1.1, 1.5, 0, 0, TAU); ctx.fill();
+    ctx.save();
+    facePath(ctx); ctx.clip();
+    ctx.globalAlpha = 0.28;
+    ctx.beginPath(); ctx.ellipse(-4.6, -39, 3.4, 5.4, 0, 0, TAU); ctx.fill();
+    ctx.globalAlpha = 0.22;
+    ctx.beginPath(); ctx.ellipse(0.4, -34.6, 4.6, 1.8, 0, 0, TAU); ctx.fill();
+    ctx.restore();
+
+    // fringe — swept across the forehead so hair and skin meet on a soft diagonal
+    ctx.fillStyle = L.hair;
+    ctx.beginPath();
+    ctx.moveTo(-5.4, -39.6);
+    ctx.quadraticCurveTo(-5.8, -46.4, 0.4, -46.6);
+    ctx.quadraticCurveTo(5.4, -46.4, 5.4, -41.4);
+    ctx.quadraticCurveTo(3.6, -43.4, 0.6, -42.2);
+    ctx.quadraticCurveTo(-2.2, -41, -3.4, -37.6);
+    ctx.quadraticCurveTo(-5, -38.2, -5.4, -39.6);
+    ctx.closePath(); ctx.fill();
+
+    // hair sheen
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    ctx.strokeStyle = L.hair2;
+    ctx.lineWidth = 1.1; ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(-3.6, -44.4);
+    ctx.quadraticCurveTo(0.6, -46, 4.2, -43.6);
+    ctx.stroke();
+    ctx.restore();
+
+    // hair ribbon
+    ctx.fillStyle = L.bow;
+    if (kind === 'sofija') {
+      ctx.beginPath(); ctx.ellipse(-4.6, -43.4, 1.5, 1.1, -0.5, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(-6.1, -44.4, 1.3, 1, 0.6, 0, TAU); ctx.fill();
+    } else {
+      ctx.beginPath(); ctx.ellipse(4.2, -44.4, 1.5, 1.1, 0.5, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(5.6, -43.3, 1.2, 0.9, -0.5, 0, TAU); ctx.fill();
+    }
+
+    // eyes
+    for (const ex of [-0.4, 2.7]) {
+      if (blink) {
+        ctx.strokeStyle = L.brow; ctx.lineWidth = 0.7; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(ex - 1, -38.9); ctx.lineTo(ex + 1, -38.9); ctx.stroke();
+        continue;
+      }
+      ctx.fillStyle = '#fdfbff';
+      ctx.beginPath(); ctx.ellipse(ex, -38.9, 1.15, 1.15, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = L.eye;
+      ctx.beginPath(); ctx.ellipse(ex + 0.15, -38.8, 0.75, 0.95, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#1a0f22';
+      ctx.beginPath(); ctx.ellipse(ex + 0.2, -38.8, 0.36, 0.5, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.ellipse(ex + 0.55, -39.4, 0.28, 0.3, 0, 0, TAU); ctx.fill();
+      ctx.strokeStyle = L.brow; ctx.lineWidth = 0.55; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(ex, -38.9, 1.2, Math.PI * 1.12, Math.PI * 1.92); ctx.stroke();
+    }
+
+    // brows
+    ctx.strokeStyle = L.brow; ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(-1.5, -40.9); ctx.quadraticCurveTo(-0.4, -41.5, 0.6, -40.9);
+    ctx.moveTo(1.8, -40.9); ctx.quadraticCurveTo(2.8, -41.5, 3.7, -41);
+    ctx.stroke();
+
+    // blush + mouth
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = L.blush;
+    ctx.beginPath(); ctx.ellipse(-1, -37.1, 1.1, 0.7, 0, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(3.3, -37.1, 1.1, 0.7, 0, 0, TAU); ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = '#a8555f'; ctx.lineWidth = 0.55; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(1.5, -36.4, 1, 0.35, Math.PI - 0.35); ctx.stroke();
   }
 
   /**
@@ -104,28 +239,9 @@
     ctx.moveTo(-5, -26); ctx.lineTo(5, -26); ctx.lineTo(4, -34); ctx.lineTo(-4, -34); ctx.closePath();
     ctx.fill();
 
-    // head
-    ctx.fillStyle = L.skin;
-    ctx.beginPath(); ctx.arc(0, -38, 5.2, 0, TAU); ctx.fill();
-
-    // hair
-    ctx.fillStyle = L.hair;
-    ctx.beginPath();
-    if (kind === 'sofija') {
-      ctx.arc(0, -39.5, 6, Math.PI, TAU);
-      ctx.lineTo(6, -34); ctx.lineTo(3, -33); ctx.lineTo(-3, -33); ctx.lineTo(-6, -34);
-    } else {
-      ctx.arc(0, -39.5, 6.2, Math.PI, TAU);
-      ctx.lineTo(6.2, -26); ctx.lineTo(2, -30); ctx.lineTo(-2, -30); ctx.lineTo(-6.2, -26);
-    }
-    ctx.closePath(); ctx.fill();
-    ctx.fillStyle = L.hair2;
-    ctx.beginPath(); ctx.arc(-2, -41, 3.4, Math.PI, TAU); ctx.fill();
-
-    // eyes
-    ctx.fillStyle = '#2a1636';
-    ctx.fillRect(1.4, -38.6, 1.4, 1.8);
-    ctx.fillRect(-2.8, -38.6, 1.2, 1.8);
+    const bt = (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000
+      + (kind === 'sofija' ? 0 : 1.9);
+    drawHeroHead(ctx, kind, L, { blink: !o.portrait && (bt % 3.7) < 0.13 });
 
     ctx.restore();
   }
@@ -143,7 +259,7 @@
     const s = w / 96;
     ctx.translate(w / 2, h * 0.97);
     ctx.scale(s * 1.5, s * 1.5);
-    drawHero(ctx, kind, 0, 0, { facing: 0.4, walk: 0.25, attack: 0, moving: false, scale: 1 });
+    drawHero(ctx, kind, 0, 0, { facing: 0.4, walk: 0.25, attack: 0, moving: false, scale: 1, portrait: true });
     ctx.restore();
     ctx.strokeStyle = L.aura; ctx.globalAlpha = 0.5;
     ctx.strokeRect(1, 1, w - 2, h - 2);
